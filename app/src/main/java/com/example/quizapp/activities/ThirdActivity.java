@@ -38,7 +38,7 @@ public class ThirdActivity extends AppCompatActivity {
             TextView question=new TextView(this);
             RadioGroup radioGroup=new RadioGroup(this);
 
-            question.setTextSize(20);
+            question.setTextSize(pxToDp(20));
             question.setText(questionsArrayList.get(i).getId()+". "+questionsArrayList.get(i).getText());
             String[] options=questionsArrayList.get(i).getOptions();
             for(int j=0;j<options.length;j++)
