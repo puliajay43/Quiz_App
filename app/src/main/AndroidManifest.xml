@@ -9,7 +9,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".activities.ThirdActivity"></activity>
-        <activity android:name=".activities.SecondActivity" />
+        <activity android:name=".activities.SecondActivity" android:configChanges="keyboardHidden|screenSize|orientation"/>
         <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

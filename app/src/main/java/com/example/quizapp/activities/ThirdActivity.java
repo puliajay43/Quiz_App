@@ -62,6 +62,8 @@ public class ThirdActivity extends AppCompatActivity {
         LinearLayout parentLinearLayout=findViewById(R.id.inner_layout);
         Set<String> qIds=answers.keySet();
         Iterator<String> it=qIds.iterator();
+        LinearLayout.LayoutParams layoutParams1=new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
+
         for(int i=0;i<questionsArrayList.size();i++)
         {
             final TextView[] textViews = new TextView[4];
@@ -81,6 +83,7 @@ public class ThirdActivity extends AppCompatActivity {
             }
             LinearLayout questionCorrect=new LinearLayout(this);
             questionCorrect.setOrientation(LinearLayout.HORIZONTAL);
+
             question.setTextSize(20);
             question.setText(questionsArrayList.get(i).getId()+". "+questionsArrayList.get(i).getText());
             questionCorrect.addView(question);
@@ -91,32 +94,45 @@ public class ThirdActivity extends AppCompatActivity {
             optionsLinearLayout.addView(questionCorrect);
             String[] options=questionsArrayList.get(i).getOptions();
             optionsLinearLayout.setOrientation(LinearLayout.VERTICAL);
-
+            LinearLayout.LayoutParams layoutParams2=new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
+            layoutParams2.setMargins(-10,0,0,0);
+            optionsLinearLayout.setLayoutParams(layoutParams2);
+            String opt="abcd";
             for(int j=0;j<options.length;j++)
             {
                 textViews[j]=new TextView(this);
-                textViews[j].setText((j+1)+". "+options[j]);
+                textViews[j].setText(opt.charAt(j)+". "+options[j]);
                 textViews[j].setTextSize(20);
+                if(j!=options.length-1)
+                    textViews[j].setPadding(10,10,10,0);
+                else
+                    textViews[j].setPadding(10,10,10,10);
                 optionsLinearLayout.addView(textViews[j]);
             }
             LinearLayout.LayoutParams layoutParams=new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
             layoutParams.setMargins(pxToDp(10),pxToDp(10),pxToDp(10),pxToDp(10));
             layoutParams.weight=2;
             layoutParams.setMarginStart(10);
-            optionsLinearLayout.setLayoutParams(layoutParams);
-            questionCorrect.setLayoutParams(layoutParams);
+
             childLayout.addView(optionsLinearLayout);
             TextView answer=new TextView(this);
+
             answer.setText("Your answer: "+responses.get(qid)+" | Actual answer: "+answers.get(qid));
             answer.setTextSize(16);
             childLayout.addView(answer);
-            if(i==questionsArrayList.size()-1)
+            if(i+1!=questionsArrayList.size())
             {
-                childLayout.addView(new TextView(this));
-                childLayout.addView(new TextView(this));
-                childLayout.addView(new TextView(this));
+                optionsLinearLayout.setLayoutParams(layoutParams);
+                questionCorrect.setLayoutParams(layoutParams);
+                childLayout.setLayoutParams(layoutParams);
             }
-            childLayout.setLayoutParams(layoutParams);
+            else
+            {
+                layoutParams1.setMargins(10,0,0,100);
+                optionsLinearLayout.setLayoutParams(layoutParams);
+                questionCorrect.setLayoutParams(layoutParams);
+                answer.setLayoutParams(layoutParams1);
+            }
             childLayout.setPadding(pxToDp(10),pxToDp(10),pxToDp(10),pxToDp(10));
             childLayout.setGravity(1);
             childLayout.setOrientation(LinearLayout.VERTICAL);
@@ -129,6 +145,7 @@ public class ThirdActivity extends AppCompatActivity {
             parentLinearLayout.setOrientation(LinearLayout.VERTICAL);
             parentLinearLayout.setWeightSum(2);
         }
+
     }
     private int getScore()
     {

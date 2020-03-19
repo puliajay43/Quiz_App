@@ -36,6 +36,14 @@ public class SecondActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
         name=findViewById(R.id.user_name);
+
+
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
         getDialog();
         addElements();
         Button submit=findViewById(R.id.submit);
@@ -53,12 +61,12 @@ public class SecondActivity extends AppCompatActivity {
                             .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                        Intent intent=new Intent(SecondActivity.this,ThirdActivity.class);
-                                        intent.putExtra("responses",responses);
-                                        intent.putExtra("question",questionsArrayList);
+                                    Intent intent=new Intent(SecondActivity.this,ThirdActivity.class);
+                                    intent.putExtra("responses",responses);
+                                    intent.putExtra("question",questionsArrayList);
 
-                                        startActivity(intent);
-                                        finish();
+                                    startActivity(intent);
+                                    finish();
                                 }
                             })
                             .setNegativeButton("Cancel", null);
@@ -67,7 +75,6 @@ public class SecondActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
     public void addElements()
     {
@@ -120,6 +127,7 @@ public class SecondActivity extends AppCompatActivity {
             }
         });
         done.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
             @Override
             public void onClick(View view) {
                 if(!userInput.getText().toString().equals("")){
@@ -140,6 +148,7 @@ public class SecondActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     private void dynamicView()
     {
+        LinearLayout.LayoutParams layoutParams1=new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
         LinearLayout parentLinearLayout=findViewById(R.id.card_view);
         for(int i=0;i<questionsArrayList.size();i++)
         {
@@ -164,8 +173,7 @@ public class SecondActivity extends AppCompatActivity {
             layoutParams.weight=2;
             layoutParams.setMarginStart(10);
             LinearLayout.LayoutParams radioParams=new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
-            radioParams.setMargins(10,10,10,10);
-            radioGroup.setPadding(10,10,10,10);
+            radioGroup.setPadding(0,10,10,10);
             childLayout.setLayoutParams(layoutParams);
             childLayout.setPadding(pxToDp(10),pxToDp(10),pxToDp(10),pxToDp(10));
             childLayout.setGravity(1);
@@ -173,6 +181,15 @@ public class SecondActivity extends AppCompatActivity {
 
             childLayout.addView(question);
             childLayout.addView(radioGroup);
+            if(i==questionsArrayList.size()-1)
+            {
+                layoutParams1.setMargins(10,10,10,70);
+                radioGroup.setLayoutParams(layoutParams1);
+            }
+            else
+            {
+                radioParams.setMargins(10,10,10,10);
+            }
             childLayout.setWeightSum(2);
             parentLinearLayout.addView(childLayout);
 
@@ -182,17 +199,12 @@ public class SecondActivity extends AppCompatActivity {
                 @Override
                 public void onCheckedChanged(RadioGroup radioGroup, int i) {
                     int selectedId = radioGroup.getCheckedRadioButtonId();
-                    //TextView question=findViewById(1);
-                    if (selectedId == -1) {
-
-                    }
-                    else {
+                    if (selectedId != -1){
                         RadioButton radioButton = (RadioButton)radioGroup.findViewById(selectedId);
                         String id=question.getText().toString().substring(0,question.getText().toString().indexOf("."));
                         System.out.println(id);
                         responses.put(id,radioButton.getText().toString());
 
-                        //sendAnswers.sendAnswer(answers);
                     }
                 }
 

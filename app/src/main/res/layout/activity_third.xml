@@ -58,7 +58,7 @@
     </ScrollView>
     <Button
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:textSize="15sp"
         android:text="Take test again"
         android:id="@+id/take_test"
