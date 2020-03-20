@@ -7,7 +7,7 @@
 
     <TextView
         android:id="@+id/question_text_view"
-        android:layout_width="wrap_content"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:text="Sun rises at?"
         android:textSize="15sp"
@@ -28,8 +28,8 @@
         android:id="@+id/response_incorrect_image_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/outline_clear_black_18"
         android:layout_toEndOf="@id/question_text_view"
+        android:src="@drawable/outline_clear_black_18"
         android:layout_toRightOf="@id/question_text_view"
         android:tint="@color/red"
         android:visibility="gone"/>

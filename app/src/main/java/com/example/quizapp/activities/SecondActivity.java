@@ -22,6 +22,7 @@ import com.example.quizapp.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.regex.Pattern;
 
 public class SecondActivity extends AppCompatActivity {
     TextView name;
@@ -29,13 +30,14 @@ public class SecondActivity extends AppCompatActivity {
     String userName;
     ArrayList<ThirdActivity.Questions> questionsArrayList=new ArrayList<>();
     HashMap<String,String> responses=new HashMap<>();
+    Button submit;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
         name=findViewById(R.id.user_name);
-
-
+        submit=findViewById(R.id.submit);
+        submit.setEnabled(false);
     }
 
     @Override
@@ -48,16 +50,13 @@ public class SecondActivity extends AppCompatActivity {
     }
     private void listeners()
     {
-        Button submit=findViewById(R.id.submit);
+
+        //submit.setEnabled(false);
+
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(responses.size()!=questionsArrayList.size())
-                {
-                    return;
-                }
-                else
-                {
+
                     AlertDialog.Builder alertDialogBuilder=new AlertDialog.Builder(SecondActivity.this).setTitle("Confirm")
                             .setMessage("Are you sure you want to submit the test?")
                             .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -74,7 +73,7 @@ public class SecondActivity extends AppCompatActivity {
                             .setNegativeButton("Cancel", null);
                     AlertDialog alertDialog=alertDialogBuilder.create();
                     alertDialog.show();
-                }
+
             }
         });
     }
@@ -85,7 +84,7 @@ public class SecondActivity extends AppCompatActivity {
         questionsArrayList.add(new ThirdActivity.Questions(3,"Tajmahal located at?",new String[]{"Bhopal","Sikkim","Agra","Chennai"}));
         questionsArrayList.add(new ThirdActivity.Questions(4,"Sun rises at? ",new String[]{"East","West","North","South"}));
         questionsArrayList.add(new ThirdActivity.Questions(5,"Capital of India? ",new String[]{"Mumbai","Hyderabad","Delhi","Banglore"}));
-        questionsArrayList.add(new ThirdActivity.Questions(6,"Tajmahal located at ?",new String[]{"Bhopal","Sikkim","Agra","Chennai"}));
+        questionsArrayList.add(new ThirdActivity.Questions(6,"Taj mahal located at?",new String[]{"Bhopal","Sikkim","Agra","Chennai"}));
 
     }
     private void getDialog()
@@ -109,6 +108,7 @@ public class SecondActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if(!userInput.getText().toString().equals("")){
                     userName=userInput.getText().toString().trim();
+                    userName=userName.replaceAll("\\s+"," ");
                     alertDialog.dismiss();
                     name.setText("Hello "+userName+", ");
                     dynamicView();
@@ -125,6 +125,11 @@ public class SecondActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before,
                                       int count) {
+                if(s.toString().trim().length()!=0) {
+                    if (!Pattern.matches("[a-zA-Z]+", s.toString().substring(0, 1))) {
+                        return;
+                    }
+                }
                 if(s.toString().trim().length()==0){
                     done.setEnabled(false);
                 } else {
@@ -144,11 +149,7 @@ public class SecondActivity extends AppCompatActivity {
             }
         });
     }
-    public int pxToDp(int px)
-    {
-        return (int) (px / getResources().getDisplayMetrics().density);
-    }
-    private void dynamicView()
+     private void dynamicView()
     {
         LinearLayout parentLinearLayout=findViewById(R.id.card_view);
         for(int i=0;i<questionsArrayList.size();i++)
@@ -190,6 +191,12 @@ public class SecondActivity extends AppCompatActivity {
                     responses.put(id,radioButton.getText().toString());
 
                 }
+                if(responses.size()==questionsArrayList.size())
+                {
+                    submit.setEnabled(true);
+                }
+                else
+                    submit.setEnabled(false);
             }
 
         });
