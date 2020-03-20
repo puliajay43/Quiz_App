@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -24,177 +25,125 @@ import java.util.Set;
 public class ThirdActivity extends AppCompatActivity {
 
     TextView score;
-    HashMap<String,String> responses;
-    HashMap<String,String> answers=new HashMap<>();
+    HashMap<String, String> responses;
+    HashMap<String, String> answers = new HashMap<>();
     ArrayList<Questions> questionsArrayList;
     Button takeTest;
+
     @RequiresApi(api = Build.VERSION_CODES.P)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_third);
-        Intent intent=getIntent();
-        responses= (HashMap<String, String>) intent.getSerializableExtra("responses");
+        Intent intent = getIntent();
+        responses = (HashMap<String, String>) intent.getSerializableExtra("responses");
         addAnswers();
-        questionsArrayList= (ArrayList<Questions>) intent.getSerializableExtra("question");
-        score=findViewById(R.id.score);
-        String finalScore=score.getText()+"<b>"+getScore()+"/"+responses.size()+"</b>";
+        questionsArrayList = (ArrayList<Questions>) intent.getSerializableExtra("question");
+        score = findViewById(R.id.score);
+        String finalScore = score.getText() + "<b>" + getScore() + "/" + responses.size() + "</b>";
         score.setText(Html.fromHtml(finalScore));
 
         getResponses();
         listeners();
     }
-    private void listeners()
-    {
-        takeTest=findViewById(R.id.take_test);
+
+    private void listeners() {
+        takeTest = findViewById(R.id.take_test);
         takeTest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(ThirdActivity.this,SecondActivity.class);
+                Intent intent = new Intent(ThirdActivity.this, SecondActivity.class);
                 startActivity(intent);
                 finish();
             }
         });
     }
+
     @RequiresApi(api = Build.VERSION_CODES.P)
-    private void getResponses()
-    {
-        LinearLayout parentLinearLayout=findViewById(R.id.inner_layout);
-        Set<String> qIds=answers.keySet();
-        Iterator<String> it=qIds.iterator();
-        LinearLayout.LayoutParams layoutParams1=new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
+    private void getResponses() {
+        LinearLayout parentLinearLayout = findViewById(R.id.inner_layout);
+        Set<String> qIds = answers.keySet();
+        Iterator<String> it = qIds.iterator();
 
-        for(int i=0;i<questionsArrayList.size();i++)
-        {
-            final TextView[] textViews = new TextView[4];
-            LinearLayout childLayout=new LinearLayout(this);
-            final TextView question=new TextView(this);
-            //question.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-            ImageView isCorrect=new ImageView(this);
-            //isCorrect.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-            String qid=it.next();
-            if(!answers.get(qid).equals(responses.get(qid))) {
-                isCorrect.setImageResource(R.drawable.outline_clear_black_18);
-                isCorrect.setColorFilter(R.color.red);
+        for (int i = 0; i < questionsArrayList.size(); i++) {
+            LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate(R.layout.layout_question, null);
+
+            TextView questionTextView = view.findViewById(R.id.question_text_view);
+            ImageView responseCorrectImageView = view.findViewById(R.id.response_correct_image_view);
+            ImageView responseIncorrectImageView = view.findViewById(R.id.response_incorrect_image_view);
+            TextView option1TextView = view.findViewById(R.id.option_1_text_view);
+            TextView option2TextView = view.findViewById(R.id.option_2_text_view);
+            TextView option3TextView = view.findViewById(R.id.option_3_text_view);
+            TextView option4TextView = view.findViewById(R.id.option_4_text_view);
+            TextView resultTextView = view.findViewById(R.id.actual_answer_text_view);
+
+
+            String qid = it.next();
+            if (!answers.get(qid).equals(responses.get(qid))) {
+                responseIncorrectImageView.setVisibility(View.VISIBLE);
+                resultTextView.setVisibility(View.VISIBLE);
+                resultTextView.setText("Your answer: " + responses.get(qid) + " | Actual answer: " + answers.get(qid));
+            } else {
+                responseCorrectImageView.setVisibility(View.VISIBLE);
             }
-            else {
-                isCorrect.setImageResource(R.drawable.outline_done_black_18);
 
-            }
-            LinearLayout questionCorrect=new LinearLayout(this);
-            questionCorrect.setOrientation(LinearLayout.HORIZONTAL);
+            questionTextView.setText(questionsArrayList.get(i).getId() + ". " + questionsArrayList.get(i).getText());
 
-            question.setTextSize(20);
-            question.setText(questionsArrayList.get(i).getId()+". "+questionsArrayList.get(i).getText());
-            questionCorrect.addView(question);
-            questionCorrect.addView(isCorrect);
+            String[] options = questionsArrayList.get(i).getOptions();
 
-           // childLayout.addView(questionCorrect);
-            LinearLayout optionsLinearLayout=new LinearLayout(this);
-            optionsLinearLayout.addView(questionCorrect);
-            String[] options=questionsArrayList.get(i).getOptions();
-            optionsLinearLayout.setOrientation(LinearLayout.VERTICAL);
-            LinearLayout.LayoutParams layoutParams2=new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
-            layoutParams2.setMargins(-10,0,0,0);
-            optionsLinearLayout.setLayoutParams(layoutParams2);
-            String opt="abcd";
-            for(int j=0;j<options.length;j++)
-            {
-                textViews[j]=new TextView(this);
-                textViews[j].setText(opt.charAt(j)+". "+options[j]);
-                textViews[j].setTextSize(20);
-                if(j!=options.length-1)
-                    textViews[j].setPadding(10,10,10,0);
-                else
-                    textViews[j].setPadding(10,10,10,10);
-                optionsLinearLayout.addView(textViews[j]);
-            }
-            LinearLayout.LayoutParams layoutParams=new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
-            layoutParams.setMargins(pxToDp(10),pxToDp(10),pxToDp(10),pxToDp(10));
-            layoutParams.weight=2;
-            layoutParams.setMarginStart(10);
+            option1TextView.setText("a. " + options[0]);
+            option2TextView.setText("b. " + options[1]);
+            option3TextView.setText("c. " + options[2]);
+            option4TextView.setText("d. " + options[3]);
 
-            childLayout.addView(optionsLinearLayout);
-            TextView answer=new TextView(this);
-
-            answer.setText("Your answer: "+responses.get(qid)+" | Actual answer: "+answers.get(qid));
-            answer.setTextSize(16);
-            childLayout.addView(answer);
-            if(i+1!=questionsArrayList.size())
-            {
-                optionsLinearLayout.setLayoutParams(layoutParams);
-                questionCorrect.setLayoutParams(layoutParams);
-                childLayout.setLayoutParams(layoutParams);
-            }
-            else
-            {
-                layoutParams1.setMargins(10,0,0,100);
-                optionsLinearLayout.setLayoutParams(layoutParams);
-                questionCorrect.setLayoutParams(layoutParams);
-                answer.setLayoutParams(layoutParams1);
-            }
-            childLayout.setPadding(pxToDp(10),pxToDp(10),pxToDp(10),pxToDp(10));
-            childLayout.setGravity(1);
-            childLayout.setOrientation(LinearLayout.VERTICAL);
-
-
-            //childLayout.addView(radioGroup);
-            childLayout.setWeightSum(2);
-            parentLinearLayout.addView(childLayout);
-
-            parentLinearLayout.setOrientation(LinearLayout.VERTICAL);
-            parentLinearLayout.setWeightSum(2);
+            parentLinearLayout.addView(view);
         }
 
     }
-    private int getScore()
-    {
-        int score=0;
-        Set<String> qIds=answers.keySet();
-        Iterator<String> it=qIds.iterator();
-        for(int i=0;i<qIds.size();i++)
-        {
-            String qid=it.next();
-            if(answers.get(qid).equals(responses.get(qid)))
+
+    private int getScore() {
+        int score = 0;
+        Set<String> qIds = answers.keySet();
+        Iterator<String> it = qIds.iterator();
+        for (int i = 0; i < qIds.size(); i++) {
+            String qid = it.next();
+            if (answers.get(qid).equals(responses.get(qid)))
                 score++;
             it.hasNext();
         }
         return score;
     }
-    private void addAnswers()
-    {
-        answers.put("1","East");
-        answers.put("2","Delhi");
-        answers.put("3","Agra");
-        answers.put("4","East");
-        answers.put("5","Delhi");
-        answers.put("6","Agra");
-    }
-    public int pxToDp(int px)
-    {
-        return (int) (px / getResources().getDisplayMetrics().density);
+
+    private void addAnswers() {
+        answers.put("1", "East");
+        answers.put("2", "Delhi");
+        answers.put("3", "Agra");
+        answers.put("4", "East");
+        answers.put("5", "Delhi");
+        answers.put("6", "Agra");
     }
 
     public static class Questions implements Serializable {
         private String text;
         String[] option;
         private int id;
-        public Questions(int idNum,String textTemp,String[] options)
-        {
-            id=idNum;
-            text=textTemp;
-            option=options;
+
+        public Questions(int idNum, String textTemp, String[] options) {
+            id = idNum;
+            text = textTemp;
+            option = options;
         }
-        public int getId()
-        {
+
+        public int getId() {
             return id;
         }
-        public String getText()
-        {
+
+        public String getText() {
             return text;
         }
-        public String[] getOptions()
-        {
+
+        public String[] getOptions() {
             return option;
         }
     }

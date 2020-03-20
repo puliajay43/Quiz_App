@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/question_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sun rises at?"
+        android:textSize="15sp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"/>
+
+    <ImageView
+        android:id="@+id/response_correct_image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/outline_done_black_18"
+        android:layout_toEndOf="@id/question_text_view"
+        android:layout_toRightOf="@id/question_text_view"
+        android:tint="@color/green"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/response_incorrect_image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/outline_clear_black_18"
+        android:layout_toEndOf="@id/question_text_view"
+        android:layout_toRightOf="@id/question_text_view"
+        android:tint="@color/red"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/option_1_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/question_text_view"
+        android:layout_marginTop="10dp"
+        android:text="West"
+        android:textSize="15sp"/>
+
+    <TextView
+        android:id="@+id/option_2_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/option_1_text_view"
+        android:layout_marginTop="10dp"
+        android:text="East"
+        android:textSize="15sp"/>
+
+    <TextView
+        android:id="@+id/option_3_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/option_2_text_view"
+        android:layout_marginTop="10dp"
+        android:text="South"
+        android:textSize="15sp"/>
+
+    <TextView
+        android:id="@+id/option_4_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/option_3_text_view"
+        android:layout_marginTop="10dp"
+        android:text="North"
+        android:textSize="15sp"/>
+
+    <TextView
+        android:id="@+id/actual_answer_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/option_4_text_view"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="10dp"
+        android:textSize="15sp"
+        android:visibility="gone"/>
+
+</RelativeLayout>

@@ -1,6 +1,5 @@
 package com.example.quizapp.activities;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -30,7 +29,6 @@ public class SecondActivity extends AppCompatActivity {
     String userName;
     ArrayList<ThirdActivity.Questions> questionsArrayList=new ArrayList<>();
     HashMap<String,String> responses=new HashMap<>();
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +44,10 @@ public class SecondActivity extends AppCompatActivity {
         super.onResume();
         getDialog();
         addElements();
+        listeners();
+    }
+    private void listeners()
+    {
         Button submit=findViewById(R.id.submit);
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,26 +85,41 @@ public class SecondActivity extends AppCompatActivity {
         questionsArrayList.add(new ThirdActivity.Questions(3,"Tajmahal located at?",new String[]{"Bhopal","Sikkim","Agra","Chennai"}));
         questionsArrayList.add(new ThirdActivity.Questions(4,"Sun rises at? ",new String[]{"East","West","North","South"}));
         questionsArrayList.add(new ThirdActivity.Questions(5,"Capital of India? ",new String[]{"Mumbai","Hyderabad","Delhi","Banglore"}));
-        questionsArrayList.add(new ThirdActivity.Questions(6,"Tajmahal located at?",new String[]{"Bhopal","Sikkim","Agra","Chennai"}));
+        questionsArrayList.add(new ThirdActivity.Questions(6,"Tajmahal located at ?",new String[]{"Bhopal","Sikkim","Agra","Chennai"}));
 
     }
     private void getDialog()
     {
-        EditText input = (EditText) findViewById(R.id.editTextDialogUserInput);
 
         LayoutInflater li = LayoutInflater.from(this);
         View promptsView = li.inflate(R.layout.alert_dialog, null);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setView(promptsView);
         alertDialogBuilder.setCancelable(false);
-        userInput = (EditText) promptsView
-                .findViewById(R.id.editTextDialogUserInput);
+        userInput = promptsView.findViewById(R.id.editTextDialogUserInput);
 
         final Button done=promptsView.findViewById(R.id.done);
 
         final AlertDialog alertDialog = alertDialogBuilder.create();
+        done.setEnabled(false);
+        editTextChanges(done);
 
+        done.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!userInput.getText().toString().equals("")){
+                    userName=userInput.getText().toString().trim();
+                    alertDialog.dismiss();
+                    name.setText("Hello "+userName+", ");
+                    dynamicView();
+                }
+            }
+        });
 
+        alertDialog.show();
+    }
+    private void editTextChanges(final Button done)
+    {
         userInput.addTextChangedListener(new TextWatcher() {
 
             @Override
@@ -126,90 +143,55 @@ public class SecondActivity extends AppCompatActivity {
 
             }
         });
-        done.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
-            @Override
-            public void onClick(View view) {
-                if(!userInput.getText().toString().equals("")){
-                    userName=userInput.getText().toString().trim();
-                    alertDialog.dismiss();
-                    name.setText("Hello "+userName+", ");
-                    dynamicView();
-                }
-            }
-        });
-
-        alertDialog.show();
     }
     public int pxToDp(int px)
     {
         return (int) (px / getResources().getDisplayMetrics().density);
     }
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     private void dynamicView()
     {
-        LinearLayout.LayoutParams layoutParams1=new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
         LinearLayout parentLinearLayout=findViewById(R.id.card_view);
         for(int i=0;i<questionsArrayList.size();i++)
         {
-            final RadioButton[] radioButtons = new RadioButton[4];
-            LinearLayout childLayout=new LinearLayout(this);
-            //TextView questionId=new TextView(this);
-            final TextView question=new TextView(this);
-            question.setTag(1);
-            RadioGroup radioGroup=new RadioGroup(this);
-            radioGroup.setTag(2);
-            question.setTextSize(20);
-            question.setText(questionsArrayList.get(i).getId()+". "+questionsArrayList.get(i).getText());
+            LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+            View questionsView = inflater.inflate(R.layout.layout_question_paper, null);
             String[] options=questionsArrayList.get(i).getOptions();
-            for(int j=0;j<options.length;j++)
-            {
-                radioButtons[j]=new RadioButton(this);
-                radioButtons[j].setText(options[j]);
-                radioGroup.addView(radioButtons[j]);
-            }
-            LinearLayout.LayoutParams layoutParams=new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
-            layoutParams.setMargins(pxToDp(10),pxToDp(10),pxToDp(10),pxToDp(10));
-            layoutParams.weight=2;
-            layoutParams.setMarginStart(10);
-            LinearLayout.LayoutParams radioParams=new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
-            radioGroup.setPadding(0,10,10,10);
-            childLayout.setLayoutParams(layoutParams);
-            childLayout.setPadding(pxToDp(10),pxToDp(10),pxToDp(10),pxToDp(10));
-            childLayout.setGravity(1);
-            childLayout.setOrientation(LinearLayout.VERTICAL);
+            TextView questionTextView=questionsView.findViewById(R.id.question);
+            RadioGroup radioGroup=questionsView.findViewById(R.id.radio_group);
+            RadioButton option1=questionsView.findViewById(R.id.option_1);
+            RadioButton option2=questionsView.findViewById(R.id.option_2);
+            RadioButton option3=questionsView.findViewById(R.id.option_3);
+            RadioButton option4=questionsView.findViewById(R.id.option_4);
+            questionTextView.setText(questionsArrayList.get(i).getId()+". "+questionsArrayList.get(i).getText());
+            option1.setText(options[0]);
+            option2.setText(options[1]);
+            option3.setText(options[2]);
+            option4.setText(options[3]);
 
-            childLayout.addView(question);
-            childLayout.addView(radioGroup);
-            if(i==questionsArrayList.size()-1)
-            {
-                layoutParams1.setMargins(10,10,10,70);
-                radioGroup.setLayoutParams(layoutParams1);
-            }
-            else
-            {
-                radioParams.setMargins(10,10,10,10);
-            }
-            childLayout.setWeightSum(2);
-            parentLinearLayout.addView(childLayout);
+            parentLinearLayout.addView(questionsView);
 
             parentLinearLayout.setOrientation(LinearLayout.VERTICAL);
             parentLinearLayout.setWeightSum(2);
-            radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                    int selectedId = radioGroup.getCheckedRadioButtonId();
-                    if (selectedId != -1){
-                        RadioButton radioButton = (RadioButton)radioGroup.findViewById(selectedId);
-                        String id=question.getText().toString().substring(0,question.getText().toString().indexOf("."));
-                        System.out.println(id);
-                        responses.put(id,radioButton.getText().toString());
 
-                    }
-                }
-
-            });
+            radioResponse(radioGroup,questionTextView);
 
         }
+    }
+    private void radioResponse(RadioGroup radioGroup, final TextView question)
+    {
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                int selectedId = radioGroup.getCheckedRadioButtonId();
+                if (selectedId != -1){
+                    RadioButton radioButton = (RadioButton)radioGroup.findViewById(selectedId);
+                    String id=question.getText().toString().substring(0,question.getText().toString().indexOf("."));
+                    System.out.println(id);
+                    responses.put(id,radioButton.getText().toString());
+
+                }
+            }
+
+        });
     }
 }
