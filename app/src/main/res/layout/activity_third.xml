@@ -63,15 +63,28 @@
             android:id="@+id/take_test"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"
             android:background="@drawable/button_rounded"
             android:padding="10dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="50dp"
+            android:layout_marginBottom="40dp"
             android:text="Take test again"
             android:backgroundTint="@color/colorAccent"
             android:textSize="15sp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="View all scores"
+            android:id="@+id/previous_scores"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@+id/take_test"
+            android:textSize="15sp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginBottom="30dp"
+            android:layout_marginTop="10dp"
+            />
     </RelativeLayout>
 
 </ScrollView>

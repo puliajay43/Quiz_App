@@ -5,8 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -19,11 +21,15 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.example.quizapp.R;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Queue;
 import java.util.regex.Pattern;
-
+import com.example.quizapp.activities.Persistance.*;
 public class SecondActivity extends AppCompatActivity {
     TextView name;
     EditText userInput;
@@ -31,12 +37,20 @@ public class SecondActivity extends AppCompatActivity {
     ArrayList<ThirdActivity.Questions> questionsArrayList=new ArrayList<>();
     HashMap<String,String> responses=new HashMap<>();
     Button submit;
+    SharedPreferences names;
+    SharedPreferences.Editor editor;
+    ArrayList<String> namesArrayList=new ArrayList<>(10);
+    AppPref getUserNames;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
         name=findViewById(R.id.user_name);
         submit=findViewById(R.id.submit);
+        getUserNames=new AppPref(this);
+
+        names=getSharedPreferences("names",MODE_PRIVATE);
+        editor=names.edit();
         submit.setEnabled(false);
     }
 
@@ -65,7 +79,7 @@ public class SecondActivity extends AppCompatActivity {
                                     Intent intent=new Intent(SecondActivity.this,ThirdActivity.class);
                                     intent.putExtra("responses",responses);
                                     intent.putExtra("question",questionsArrayList);
-
+                                    intent.putExtra("userName",userName);
                                     startActivity(intent);
                                     finish();
                                 }
@@ -96,7 +110,6 @@ public class SecondActivity extends AppCompatActivity {
         alertDialogBuilder.setView(promptsView);
         alertDialogBuilder.setCancelable(false);
         userInput = promptsView.findViewById(R.id.editTextDialogUserInput);
-
         final Button done=promptsView.findViewById(R.id.done);
 
         final AlertDialog alertDialog = alertDialogBuilder.create();
@@ -118,6 +131,15 @@ public class SecondActivity extends AppCompatActivity {
 
         alertDialog.show();
     }
+    public void saveArrayList(ArrayList<String> list, String key){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = prefs.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(list);
+        editor.putString(key, json);
+        editor.apply();
+    }
+
     private void editTextChanges(final Button done)
     {
         userInput.addTextChangedListener(new TextWatcher() {

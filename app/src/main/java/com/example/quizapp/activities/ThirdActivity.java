@@ -4,8 +4,10 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +23,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
-
+import com.example.quizapp.activities.Utils.*;
+import com.example.quizapp.activities.Persistance.*;
 public class ThirdActivity extends AppCompatActivity {
 
     TextView score;
@@ -29,7 +32,12 @@ public class ThirdActivity extends AppCompatActivity {
     HashMap<String, String> answers = new HashMap<>();
     ArrayList<Questions> questionsArrayList;
     Button takeTest;
+    SharedPreferences scores;
+    SharedPreferences.Editor editor;
+    TextView previousScore;
 
+    AppPref getUserNamesAndScores;
+    static ArrayList<UserNameAndScore> userNameAndScoreArrayList=new ArrayList<>();
     @RequiresApi(api = Build.VERSION_CODES.P)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,10 +47,17 @@ public class ThirdActivity extends AppCompatActivity {
         responses = (HashMap<String, String>) intent.getSerializableExtra("responses");
         addAnswers();
         questionsArrayList = (ArrayList<Questions>) intent.getSerializableExtra("question");
+        scores=getSharedPreferences("scores",MODE_PRIVATE);
+        editor=scores.edit();
+        String userName=(String) intent.getSerializableExtra("userName");
         score = findViewById(R.id.score);
+        getUserNamesAndScores=new AppPref(this);
+        UserNameAndScore userNameAndScore=new UserNameAndScore(userName,getScore()+"/"+responses.size());
         String finalScore = score.getText() + "<b>" + getScore() + "/" + responses.size() + "</b>";
         score.setText(Html.fromHtml(finalScore));
-
+        userNameAndScoreArrayList.add(userNameAndScore);
+        getUserNamesAndScores.storeData(userNameAndScoreArrayList);
+        System.out.println(userNameAndScoreArrayList);
         getResponses();
         listeners();
     }
@@ -55,6 +70,15 @@ public class ThirdActivity extends AppCompatActivity {
                 Intent intent = new Intent(ThirdActivity.this, SecondActivity.class);
                 startActivity(intent);
                 finish();
+            }
+        });
+        previousScore=findViewById(R.id.previous_scores);
+        previousScore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent1=new Intent(ThirdActivity.this,ScoresActivity.class);
+                intent1.putExtra("namesAndScoresArrayList",  getUserNamesAndScores.getData());
+                startActivity(intent1);
             }
         });
     }

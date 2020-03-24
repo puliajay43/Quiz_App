@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">Quiz App</string>
+    <string name="app_name">Take Quiz</string>
+    <string name="previous_scores"><u>Previous scores</u></string>
 </resources>

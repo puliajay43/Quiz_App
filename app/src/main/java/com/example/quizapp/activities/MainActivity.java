@@ -34,5 +34,13 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             }
         });
+        TextView previousScores=findViewById(R.id.previous_scores);
+        previousScores.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(MainActivity.this,ScoresActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 }
